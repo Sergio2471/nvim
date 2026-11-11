@@ -19,21 +19,36 @@ require('lazy').setup({
     -- NOTE: --- THEMES ---
     {
         'folke/tokyonight.nvim',
-        lazy = false,
-        priority = 1000,
+        lazy = true,
         config = use('themes.tokyo-night'),
     },
-    { 'catppuccin/nvim',          name = 'catppuccin', lazy = true },
-    { 'ellisonleao/gruvbox.nvim', lazy = true },
-    { 'rebelot/kanagawa.nvim'},
+    { 'catppuccin/nvim',          name = 'catppuccin', lazy = true, config = use('themes.catppuccin') },
+    { 'ellisonleao/gruvbox.nvim', lazy = true,         config = use('themes.gruvbox') },
+    { 'rebelot/kanagawa.nvim',    lazy = true },
+    -- Aparecen solos en <leader>ft; añadir un tema es añadir una línea
+    { 'rose-pine/neovim',              name = 'rose-pine', lazy = true },
+    { 'EdenEast/nightfox.nvim',        lazy = true },
+    { 'navarasu/onedark.nvim',         lazy = true },
+    { 'Mofiqul/dracula.nvim',          lazy = true },
+    { 'gbprod/nord.nvim',              lazy = true },
+    { 'sainnhe/everforest',            lazy = true },
+    { 'sainnhe/gruvbox-material',      lazy = true },
+    { 'sainnhe/sonokai',               lazy = true },
+    { 'projekt0n/github-nvim-theme',   name = 'github-theme', lazy = true },
+    { 'Shatur/neovim-ayu',             lazy = true },
+    { 'vague-theme/vague.nvim',        lazy = true },
+    { 'scottmckendry/cyberdream.nvim', lazy = true },
+    { 'bluz71/vim-moonfly-colors',     name = 'moonfly', lazy = true },
+    { 'bluz71/vim-nightfly-colors',    name = 'nightfly', lazy = true },
+    { 'savq/melange-nvim',             lazy = true },
 
     -- LSP
     {
         'neovim/nvim-lspconfig',
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
-            'williamboman/mason.nvim',
-            'williamboman/mason-lspconfig.nvim',
+            'mason-org/mason.nvim',
+            'mason-org/mason-lspconfig.nvim',
             -- Code actions de LTeX+ (diccionario, desactivar regla, falsos positivos)
             'barreiroleo/ltex_extra.nvim',
         },
@@ -117,26 +132,20 @@ require('lazy').setup({
         end,
     },
 
-    -- Fzf
+    -- fff: archivos y grep (Telescope sigue para ayuda, recientes y buffers)
     {
-        'ibhagwan/fzf-lua',
-        cmd = 'FzfLua',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        'dmtrKovalenko/fff',
+        build = function()
+            require('fff.download').download_or_build_binary()
+        end,
+        lazy = false, -- se inicializa de forma diferida por su cuenta
         opts = {},
     },
 
-    -- Harpoon (cargado on demand por los mappings de which-key)
-    { 'ThePrimeagen/harpoon', lazy = true },
-
-    -- MarkdownPreview
+    -- Vista previa de Markdown en el navegador (Lua puro, sin Node ni build)
     {
-        'iamcco/markdown-preview.nvim',
-        cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
-        build = 'cd app && yarn install',
-        init = function()
-            vim.g.mkdp_filetypes = { 'markdown' }
-        end,
-        ft = { 'markdown' },
+        'brianhuster/live-preview.nvim',
+        cmd = 'LivePreview',
     },
 
     -- Alpha (dashboard)
@@ -149,25 +158,25 @@ require('lazy').setup({
 
     -- Mini
     {
-        'echasnovski/mini.pairs',
+        'nvim-mini/mini.pairs',
         version = '*',
         event = 'InsertEnter',
         config = use('mini-pairs'),
     },
     {
-        'echasnovski/mini.surround',
+        'nvim-mini/mini.surround',
         version = '*',
         event = 'VeryLazy',
         config = use('mini-surround'),
     },
     {
-        'echasnovski/mini.cursorword',
+        'nvim-mini/mini.cursorword',
         version = '*',
         event = { 'BufReadPost', 'BufNewFile' },
         config = use('mini-cursorword'),
     },
     {
-        'echasnovski/mini.indentscope',
+        'nvim-mini/mini.indentscope',
         version = '*',
         event = { 'BufReadPost', 'BufNewFile' },
         config = use('mini-indent-scope'),
@@ -187,7 +196,7 @@ require('lazy').setup({
 
     -- Colorizer - NvChad
     {
-        'NvChad/nvim-colorizer.lua',
+        'catgoose/nvim-colorizer.lua',
         event = { 'BufReadPost', 'BufNewFile' },
         config = use('colorizer'),
     },
@@ -275,27 +284,12 @@ require('lazy').setup({
         },
     },
 
-    -- Twilight Nvim
-    {
-        'folke/twilight.nvim',
-        lazy = true,
-        cmd = 'Twilight',
-        opts = {},
-    },
-
     -- Rip Substitute
     {
         'chrisgrieser/nvim-rip-substitute',
         lazy = true,
         cmd = 'RipSubstitute',
         opts = {},
-    },
-
-    -- Goto
-    {
-        'rmagatti/goto-preview',
-        lazy = true, -- cargado por los mappings <leader>g* de which-key
-        config = true,
     },
 
     -- Trouble
@@ -308,9 +302,9 @@ require('lazy').setup({
     -- render-markdown
     {
         'MeanderingProgrammer/render-markdown.nvim',
-        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
-        -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+        ft = 'markdown',
+        cmd = 'RenderMarkdown',
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
         ---@module 'render-markdown'
         ---@type render.md.UserConfig
         opts = {},
@@ -319,7 +313,121 @@ require('lazy').setup({
     -- formatter
     {
         'stevearc/conform.nvim',
+        cmd = 'ConformInfo', -- también carga al formatear con <leader>F
+        opts = {
+            default_format_opts = { lsp_format = 'fallback' }, -- Lua y demás los formatea el LSP
+            formatters_by_ft = {
+                python = { 'ruff_organize_imports', 'ruff_format' },
+                javascript = { 'prettier' },
+                javascriptreact = { 'prettier' },
+                typescript = { 'prettier' },
+                typescriptreact = { 'prettier' },
+                css = { 'prettier' },
+                html = { 'prettier' },
+                json = { 'prettier' },
+                yaml = { 'prettier' },
+                markdown = { 'prettier' },
+            },
+        },
+    },
+
+    -- Diagnósticos inline (virtual_text apagado en lsp_config.lua)
+    {
+        'rachartier/tiny-inline-diagnostic.nvim',
+        event = 'VeryLazy',
+        priority = 1000,
+        opts = {
+            hi = { mixing_color = '#1F1F28' }, -- Normal no tiene fondo del que mezclar
+        },
+    },
+
+    -- Code actions con vista previa (mapeo en lsp_config.lua)
+    {
+        'rachartier/tiny-code-action.nvim',
+        event = 'LspAttach',
+        opts = { picker = 'telescope' },
+    },
+
+    -- Diffs estilo VS Code (mapeos en which-key)
+    {
+        'esmuellert/codediff.nvim',
+        cmd = 'CodeDiff',
+    },
+
+    -- Estela del cursor (antes era un shader de Ghostty)
+    {
+        'sphamba/smear-cursor.nvim',
+        event = 'VeryLazy',
+        opts = {
+            legacy_computing_symbols_support = true, -- Iosevka los incluye
+        },
+    },
+
+    -- Animación al copiar y pegar
+    {
+        'rachartier/tiny-glimmer.nvim',
+        event = 'VeryLazy',
+        priority = 10, -- después del resto, para respetar sus mapeos
+        opts = {
+            autoreload = true,
+            transparency_color = '#1F1F28',
+        },
+    },
+
+    -- Scrollbar con diagnósticos y git
+    {
+        'lewis6991/satellite.nvim',
+        event = { 'BufReadPost', 'BufNewFile' },
+        opts = {
+            excluded_filetypes = { 'alpha', 'codediff-explorer', 'codediff-history' },
+        },
+    },
+
+    -- Estado flotante por ventana
+    {
+        'b0o/incline.nvim',
+        event = 'VeryLazy',
+        config = use('incline'),
+    },
+
+    -- Sesiones por carpeta
+    {
+        'olimorris/persisted.nvim',
+        event = 'BufReadPre',
+        cmd = 'Persisted', -- el botón del dashboard carga antes de abrir un archivo
+        config = use('persisted'),
+    },
+
+    -- Entornos virtuales de Python
+    {
+        'linux-cultist/venv-selector.nvim',
+        ft = 'python',
+        keys = { { '<leader>lv', '<cmd>VenvSelect<cr>', desc = 'Select Venv', ft = 'python' } },
         opts = {},
     },
 
+    -- Hardtime: avisa de malos hábitos sin bloquear
+    {
+        'm4xshen/hardtime.nvim',
+        event = 'VeryLazy',
+        dependencies = { 'MunifTanjim/nui.nvim' },
+        opts = {
+            restriction_mode = 'hint',
+            disable_mouse = false, -- satellite y alpha usan el ratón
+            resetting_keys = { p = false, P = false }, -- p y P son de tiny-glimmer
+            disabled_keys = {
+                ['<Up>'] = false,
+                ['<Down>'] = false,
+                ['<Left>'] = false,
+                ['<Right>'] = false,
+            },
+            disabled_filetypes = { ['codediff.*'] = true, ['fff.*'] = true, dropbar_menu = true },
+        },
+    },
+
+}, {
+    change_detection = { notify = false },
+    performance = {
+        rtp = { disabled_plugins = { 'gzip', 'tarPlugin', 'tohtml', 'tutor', 'zipPlugin' } },
+    },
 })

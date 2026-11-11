@@ -4,31 +4,29 @@ require("mason-lspconfig").setup({
         "cssls",
         "ts_ls",
         "pyright",
+        "ruff",
         "html",
         "ltex_plus",
     }
 })
 
-local capabilities = require("blink.cmp").get_lsp_capabilities()
-
 -- Configurar servidores con la API nativa de Neovim 0.11+
+vim.lsp.config("*", { capabilities = require("blink.cmp").get_lsp_capabilities() })
 vim.lsp.config("lua_ls", {
-    capabilities = capabilities,
     settings = {
         Lua = {
             workspace = { checkThirdParty = false },
         },
     },
 })
-vim.lsp.config("ts_ls", { capabilities = capabilities })
-vim.lsp.config("gopls", { capabilities = capabilities })
-vim.lsp.config("pyright", { capabilities = capabilities })
-vim.lsp.config("cssls", { capabilities = capabilities })
-vim.lsp.config("html", { capabilities = capabilities })
+vim.lsp.config("ruff", {
+    on_attach = function(client)
+        client.server_capabilities.hoverProvider = false -- el hover lo da pyright
+    end,
+})
 
 -- LTeX+ (LanguageTool): gramática/ortografía + completions + code actions
 vim.lsp.config("ltex_plus", {
-    capabilities = capabilities,
     on_attach = function()
         require("ltex_extra").setup({
             load_langs = { "es-ES" },
@@ -48,8 +46,8 @@ vim.lsp.config("ltex_plus", {
 vim.lsp.enable({
     "lua_ls",
     "ts_ls",
-    "gopls",
     "pyright",
+    "ruff",
     "cssls",
     "html",
     "ltex_plus",
@@ -57,9 +55,7 @@ vim.lsp.enable({
 
 -- Configurar diagnósticos
 vim.diagnostic.config({
-    virtual_text = {
-        prefix = "●",
-    },
+    virtual_text = false, -- los muestra tiny-inline-diagnostic
     signs = {
         text = {
             [vim.diagnostic.severity.ERROR] = "",
@@ -103,11 +99,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set("n", "<leader>lt", vim.lsp.buf.type_definition,
             vim.tbl_extend("force", opts, { desc = "Type Definition" }))
         vim.keymap.set("n", "<leader>lR", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename" }))
-        vim.keymap.set({ "n", "v" }, "<leader>lc", vim.lsp.buf.code_action,
+        vim.keymap.set({ "n", "v" }, "<leader>lc", function() require("tiny-code-action").code_action() end,
             vim.tbl_extend("force", opts, { desc = "Code Action" }))
         vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", opts, { desc = "References" }))
         vim.keymap.set("n", "<leader>F", function()
-            vim.lsp.buf.format({ async = true })
+            require("conform").format({ async = true })
         end, vim.tbl_extend("force", opts, { desc = "Format" }))
     end,
 })

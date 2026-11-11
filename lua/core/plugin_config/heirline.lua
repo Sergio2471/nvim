@@ -12,14 +12,14 @@ end
 
 local function setup_colors()
     local palette = {}
-    local ok, kanagawa = pcall(require, 'kanagawa.colors')
-    if ok then
-        palette = kanagawa.setup().palette or {}
+    -- solo con Kanagawa activo: el require cargaría el plugin con cualquier tema
+    if (vim.g.colors_name or ''):match('^kanagawa') then
+        palette = require('kanagawa.colors').setup().palette or {}
     end
 
     return {
         ink = palette.sumiInk0 or hex('Normal', 'bg', '#1F1F28') or '#1F1F28',
-        ink4 = palette.sumiInk4 or '#2A2A37',
+        ink4 = palette.sumiInk4 or hex('CursorLine', 'bg', '#2A2A37'),
         fuji = palette.fujiWhite or hex('Normal', 'fg', '#DCD7BA'),
         muted = palette.fujiGray or hex('Comment', 'fg', '#727169'),
         crystal = palette.crystalBlue or hex('Function', 'fg', '#7E9CD8'),
@@ -310,7 +310,6 @@ local lsp_icons = {
     pyright = ' ',
     basedpyright = ' ',
     ts_ls = ' ',
-    rust_analyzer = ' ',
     gopls = ' ',
     clangd = ' ',
     bashls = ' ',
@@ -402,25 +401,6 @@ local FileType = {
     hl = { fg = 'muted' },
 }
 
-local Harpoon = {
-    condition = function()
-        local mark = package.loaded['harpoon.mark']
-        if not mark then return false end
-        local total = mark.get_length()
-        return total and total > 0
-    end,
-    provider = function()
-        local mark = package.loaded['harpoon.mark']
-        local total = mark.get_length()
-        local idx = mark.get_current_index()
-        return string.format(' 󰛢 %s/%d ', idx or '·', total)
-    end,
-    hl = { fg = 'wave' },
-}
-
-local HarpoonBlock = utils.surround({ '', '' }, 'ink4', Harpoon)
-HarpoonBlock.condition = Harpoon.condition
-
 local Ruler = {
     provider = ' %l:%c  %P ',
     hl = { fg = 'ink', bold = true },
@@ -492,7 +472,6 @@ local DefaultStatusline = {
     Space,
     LazyUpdates,
     FileType,
-    HarpoonBlock,
     Space,
     FileEncoding,
     FileFormat,

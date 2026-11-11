@@ -70,37 +70,27 @@ wk.add({
 
     -- ── Telescope / Búsqueda ──────────────────────────────────────────
     { "<leader>f",  group = "Find", icon = "" },
-    { "<leader>ff", function() require('telescope.builtin').fd() end,                     desc = "Find Files",       mode = "n", icon = "󰈞" },
+    { "<leader>ff", function() require('fff').find_files() end,                           desc = "Find Files",       mode = "n", icon = "󰈞" },
     { "<leader>fF", function() require('telescope.builtin').fd({ cwd = vim.fn.expand('~') }) end,    desc = "Find Files (cwd)", mode = "n", icon = "󰈞" },
-    { "<leader>fg", function() require('telescope.builtin').live_grep() end,             desc = "Live Grep",        mode = "n", icon = "󰊄" },
+    { "<leader>fg", function() require('fff').live_grep() end,                           desc = "Live Grep",        mode = "n", icon = "󰊄" },
     { "<leader>fG", function() require('telescope.builtin').live_grep({ cwd = vim.fn.expand('~') }) end, desc = "Live Grep (cwd)", mode = "n", icon = "󰊄" },
     { "<leader>fh", function() require('telescope.builtin').help_tags() end,             desc = "Help Tags",        mode = "n", icon = "󰮥" },
     { "<leader>fr", function() require('telescope.builtin').oldfiles() end,              desc = "Recent Files",     mode = "n", icon = "" },
+    { "<leader>ft", function() require('telescope.builtin').colorscheme({ enable_preview = true, ignore_builtins = true }) end, desc = "Themes", mode = "n", icon = "󰏘" },
     { "<leader>fb", function() require('telescope.builtin').buffers() end,               desc = "Buffers",          mode = "n", icon = "󰓩" },
-    { "<leader>fp", function() require('harpoon.ui').toggle_quick_menu() end,             desc = "Harpoon Marks",    mode = "n", icon = "󱡁" },
     { "<leader>fs", function() require("rip-substitute").sub() end,                      desc = "Search & Replace", mode = { "n", "x" }, icon = "" },
-
-    -- ── Goto (goto-preview) ───────────────────────────────────────────
-    { "<leader>g",  group = "Goto", icon = "󱥼" },
-    { "<leader>gd", function() require('goto-preview').goto_preview_definition() end,       desc = "Definition",      mode = "n", icon = "" },
-    { "<leader>gD", function() require('goto-preview').goto_preview_declaration() end,      desc = "Declaration",     mode = "n", icon = "󱎸" },
-    { "<leader>gt", function() require('goto-preview').goto_preview_type_definition() end,  desc = "Type Definition", mode = "n", icon = "󱈤" },
-    { "<leader>gi", function() require('goto-preview').goto_preview_implementation() end,   desc = "Implementation",  mode = "n", icon = "󱄽" },
-    { "<leader>gr", function() require('goto-preview').goto_preview_references() end,       desc = "References",      mode = "n", icon = "󰈇" },
-    { "<leader>gP", function() require('goto-preview').close_all_win() end,                 desc = "Close All Windows", mode = "n", icon = "󱄊" },
 
     -- ── Modes / Toggles ───────────────────────────────────────────────
     { "<leader>m",  group = "Modes", icon = "" },
-    { "<leader>mm", "<CMD>MarkdownPreviewToggle<CR>",           desc = "Markdown Preview", mode = "n", icon = "" },
+    { "<leader>mm", "<CMD>LivePreview start<CR>",                desc = "Markdown Preview", mode = "n", icon = "" },
+    { "<leader>mM", "<CMD>LivePreview close<CR>",               desc = "Stop Preview",     mode = "n", icon = "󰅚" },
     { "<leader>mr", "<CMD>RenderMarkdown toggle<CR>",           desc = "Render Markdown",  mode = "n", icon = "" },
-    { "<leader>mt", function() require("twilight").toggle() end, desc = "Twilight",        mode = "n", icon = "󰨀" },
+    { "<leader>mh", "<CMD>Hardtime toggle<CR>",                 desc = "Hardtime",         mode = "n", icon = "󰥔" },
 
-    -- ── Harpoon ───────────────────────────────────────────────────────
-    { "<leader>p",  group = "Harpoon", icon = "" },
-    { "<leader>pa", function() require('harpoon.mark').add_file() end,        desc = "Add File",   mode = "n", icon = "󰐕" },
-    { "<leader>pm", function() require('harpoon.ui').toggle_quick_menu() end, desc = "Quick Menu", mode = "n", icon = "" },
-    { "<leader>pn", function() require('harpoon.ui').nav_next() end,          desc = "Next Mark",  mode = "n", icon = "" },
-    { "<leader>pp", function() require('harpoon.ui').nav_prev() end,          desc = "Prev Mark",  mode = "n", icon = "" },
+    -- ── Sesiones ──────────────────────────────────────────────────────
+    { "<leader>S",  group = "Sessions", icon = "󰦛" },
+    { "<leader>Sl", "<CMD>Persisted load<CR>",   desc = "Load Session",   mode = "n", icon = "󰦛" },
+    { "<leader>Ss", "<CMD>Persisted select<CR>", desc = "Select Session", mode = "n", icon = "󰦛" },
 
     -- ── Trouble ───────────────────────────────────────────────────────
     { "<leader>x",  group = "Trouble", icon = "" },
@@ -131,6 +121,9 @@ wk.add({
     { "<leader>hd",  group = "Diff", mode = "n", icon = "" },
     { "<leader>hdh", function() require('gitsigns').diffthis() end,    desc = "Diff This",     mode = "n", icon = "" },
     { "<leader>hdH", function() require('gitsigns').diffthis('~') end, desc = "Diff This (~)", mode = "n", icon = "" },
+
+    { "<leader>hdd", "<CMD>CodeDiff<CR>",         desc = "Code Diff",    mode = "n", icon = "󰦓" },
+    { "<leader>hdf", "<CMD>CodeDiff history<CR>", desc = "Diff History", mode = "n", icon = "󰋚" },
 
     -- Quickfix
     { "<leader>hq",  group = "Quickfix", mode = "n", icon = "" },
